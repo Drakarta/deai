@@ -120,7 +120,7 @@ def main():
         adres TEXT,
         provincie TEXT,
         FOREIGN KEY (filiaalnr) REFERENCES onderhoud_filiaal(filiaalnr),
-        FOREIGN KEY (filiaalnr) REFERENCES accessoire_verkoop_filiaal(filiaalnr
+        FOREIGN KEY (filiaalnr) REFERENCES accessoire_verkoop_filiaal(filiaalnr)
     );
 
     CREATE TABLE fiets_verkoop_monteur (
@@ -131,7 +131,7 @@ def main():
         filiaal INTEGER,
         FOREIGN KEY (filiaal) REFERENCES fiets_verkoop_filiaal(filiaalnr),
         FOREIGN KEY (monteurNr) REFERENCES onderhoud_monteur(monteurNr),
-        FOREIGN KEY (monteurNr) REFERENCES accessoire_verkoop_monteur(monteur
+        FOREIGN KEY (monteurNr) REFERENCES accessoire_verkoop_monteur(monteurNr)
     );
 
     CREATE TABLE fiets_verkoop_fabrikant (
@@ -234,7 +234,7 @@ def main():
         FOREIGN KEY (fietsnr) REFERENCES fiets_verkoop_fiets(fietsnr),
         FOREIGN KEY (fietsnr) REFERENCES fiets_inkoop_fiets(fietsnr)
     );
-                      
+
     CREATE TABLE onderhoud_fabrikant (
         fabrikantnr INTEGER PRIMARY KEY,
         naam TEXT,
