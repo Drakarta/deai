@@ -1,6 +1,6 @@
 --BikeToDrive_Accessoire_Verkoop;
 
-CREATE TABLE Accessoire_Verkoop_Klant (
+CREATE TABLE Klant (
 	klantnr INT,
 	naam VARCHAR(45),
 	adres VARCHAR(100),
@@ -11,7 +11,7 @@ CREATE TABLE Accessoire_Verkoop_Klant (
 	PRIMARY KEY(klantnr)
 );
 
-CREATE TABLE Accessoire_Verkoop_Filiaal (
+CREATE TABLE Filiaal (
 	filiaalnr INT,
 	naam VARCHAR(45),
 	adres VARCHAR(100),
@@ -20,7 +20,7 @@ CREATE TABLE Accessoire_Verkoop_Filiaal (
 	PRIMARY KEY(filiaalnr)
 );
 
-CREATE TABLE Accessoire_Verkoop_Monteur (
+CREATE TABLE Monteur (
 	monteurNr INT,
 	naam VARCHAR(45),
 	woonplaats VARCHAR(45),
@@ -28,10 +28,10 @@ CREATE TABLE Accessoire_Verkoop_Monteur (
 	filiaal INT NOT NULL,
 
 	PRIMARY KEY(monteurNr),
-	FOREIGN KEY(filiaal) REFERENCES Accessoire_Verkoop_Filiaal(filiaalnr)
+	FOREIGN KEY(filiaal) REFERENCES Filiaal(filiaalnr)
 );
 
-CREATE TABLE Accessoire_Verkoop_Leverancier (
+CREATE TABLE Leverancier (
 	leveranciernr INT,
 	naam VARCHAR(45),
 	adres VARCHAR(100),
@@ -40,7 +40,7 @@ CREATE TABLE Accessoire_Verkoop_Leverancier (
 	PRIMARY KEY(leveranciernr)
 );
 
-CREATE TABLE Accessoire_Verkoop_Accessoire (
+CREATE TABLE Accessoire (
 	accessoirenr INT,
 	naam VARCHAR(45),
 	standaardprijs FLOAT,
@@ -49,7 +49,7 @@ CREATE TABLE Accessoire_Verkoop_Accessoire (
 	leverancier INT NOT NULL,
 
 	PRIMARY KEY(accessoirenr),
-	FOREIGN KEY(leverancier) REFERENCES Accessoire_Verkoop_Leverancier(leveranciernr)
+	FOREIGN KEY(leverancier) REFERENCES Leverancier(leveranciernr)
 );
 
 CREATE TABLE Accessoire_Verkoop (
@@ -62,7 +62,7 @@ CREATE TABLE Accessoire_Verkoop (
 	monteur INT NOT NULL,
 
 	PRIMARY KEY(verkoopnr),
-	FOREIGN KEY(klant) REFERENCES Accessoire_Verkoop_Klant(klantnr),
-	FOREIGN KEY(accessoire) REFERENCES Accessoire_Verkoop_Accessoire(accessoirenr),
-	FOREIGN KEY(monteur) REFERENCES Accessoire_Verkoop_Monteur(monteurNr)
+	FOREIGN KEY(klant) REFERENCES Klant(klantnr),
+	FOREIGN KEY(accessoire) REFERENCES Accessoire(accessoirenr),
+	FOREIGN KEY(monteur) REFERENCES Monteur(monteurNr)
 );
