@@ -6,7 +6,7 @@ def main():
 
     cur.execute("PRAGMA foreign_keys = ON")
 
-    cur.executescript("""
+    cur.executescript("""--sql
 
     -- ACCESSOIRE VERKOOP
 
@@ -24,7 +24,9 @@ def main():
         filiaalnr INTEGER PRIMARY KEY,
         naam TEXT,
         adres TEXT,
-        provincie TEXT
+        provincie TEXT,
+        FOREIGN KEY (filiaalnr) REFERENCES onderhoud_filiaal(filiaalnr),
+        FOREIGN KEY (filiaalnr) REFERENCES fiets_verkoop_filiaal(filiaalnr)
     );
 
     CREATE TABLE accessoire_verkoop_monteur (
@@ -33,14 +35,17 @@ def main():
         woonplaats TEXT,
         uurloon REAL,
         filiaal INTEGER,
-        FOREIGN KEY (filiaal) REFERENCES accessoire_verkoop_filiaal(filiaalnr)
+        FOREIGN KEY (filiaal) REFERENCES accessoire_verkoop_filiaal(filiaalnr),
+        FOREIGN KEY (monteurNr) REFERENCES onderhoud_monteur(monteurNr),  
+        FOREIGN KEY (monteurNr) REFERENCES fiets_verkoop_monteur(monteurNr)
     );
 
     CREATE TABLE accessoire_verkoop_leverancier (
         leveranciernr INTEGER PRIMARY KEY,
         naam TEXT,
         adres TEXT,
-        woonplaats TEXT
+        woonplaats TEXT,
+        FOREIGN KEY (leveranciernr) REFERENCES accessoire_inkoop_leverancier(leveranciernr)
     );
 
     CREATE TABLE accessoire_verkoop_accessoire (
@@ -50,7 +55,8 @@ def main():
         inkoopprijs REAL,
         soort TEXT,
         leverancier INTEGER,
-        FOREIGN KEY (leverancier) REFERENCES accessoire_verkoop_leverancier(leveranciernr)
+        FOREIGN KEY (leverancier) REFERENCES accessoire_verkoop_leverancier(leveranciernr),
+        FOREIGN KEY (accessoirenr) REFERENCES accessoire_inkoop_accessoire(accessoirenr)
     );
 
     CREATE TABLE accessoire_verkoop_verkoop (
@@ -72,7 +78,8 @@ def main():
         leveranciernr INTEGER PRIMARY KEY,
         naam TEXT,
         adres TEXT,
-        woonplaats TEXT
+        woonplaats TEXT,
+        FOREIGN KEY (leveranciernr) REFERENCES accessoire_verkoop_leverancier(leveranciernr)
     );
 
     CREATE TABLE accessoire_inkoop_accessoire (
@@ -82,7 +89,8 @@ def main():
         inkoopprijs REAL,
         soort TEXT,
         leverancier INTEGER,
-        FOREIGN KEY (leverancier) REFERENCES accessoire_inkoop_leverancier(leveranciernr)
+        FOREIGN KEY (leverancier) REFERENCES accessoire_inkoop_leverancier(leveranciernr),
+        FOREIGN KEY (accessoirenr) REFERENCES accessoire_verkoop_accessoire(accessoirenr)
     );
 
     CREATE TABLE accessoire_inkoop_inkoop (
@@ -110,7 +118,9 @@ def main():
         filiaalnr INTEGER PRIMARY KEY,
         naam TEXT,
         adres TEXT,
-        provincie TEXT
+        provincie TEXT,
+        FOREIGN KEY (filiaalnr) REFERENCES onderhoud_filiaal(filiaalnr),
+        FOREIGN KEY (filiaalnr) REFERENCES accessoire_verkoop_filiaal(filiaalnr
     );
 
     CREATE TABLE fiets_verkoop_monteur (
@@ -119,7 +129,9 @@ def main():
         woonplaats TEXT,
         uurloon REAL,
         filiaal INTEGER,
-        FOREIGN KEY (filiaal) REFERENCES fiets_verkoop_filiaal(filiaalnr)
+        FOREIGN KEY (filiaal) REFERENCES fiets_verkoop_filiaal(filiaalnr),
+        FOREIGN KEY (monteurNr) REFERENCES onderhoud_monteur(monteurNr),
+        FOREIGN KEY (monteurNr) REFERENCES accessoire_verkoop_monteur(monteur
     );
 
     CREATE TABLE fiets_verkoop_fabrikant (
@@ -197,7 +209,9 @@ def main():
         filiaalnr INTEGER PRIMARY KEY,
         naam TEXT,
         adres TEXT,
-        provincie TEXT
+        provincie TEXT,
+        FOREIGN KEY (filiaalnr) REFERENCES accessoire_verkoop_filiaal(filiaalnr),
+        FOREIGN KEY (filiaalnr) REFERENCES fiets_verkoop_filiaal(filiaalnr)
     );
 
     CREATE TABLE onderhoud_monteur (
@@ -206,7 +220,9 @@ def main():
         woonplaats TEXT,
         uurloon REAL,
         filiaal INTEGER,
-        FOREIGN KEY (filiaal) REFERENCES onderhoud_filiaal(filiaalnr)
+        FOREIGN KEY (filiaal) REFERENCES onderhoud_filiaal(filiaalnr),
+        FOREIGN KEY (monteurNr) REFERENCES accessoire_verkoop_monteur(monteurNr),
+        FOREIGN KEY (monteurNr) REFERENCES fiets_verkoop_monteur(monteurNr)
     );
 
     CREATE TABLE onderhoud_fiets (
