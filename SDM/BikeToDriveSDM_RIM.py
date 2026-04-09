@@ -16,7 +16,8 @@ def main():
         adres TEXT,
         woonplaats TEXT,
         geslacht TEXT,
-        geboortedatum TEXT
+        geboortedatum TEXT,
+        FOREIGN KEY (klantnr) REFERENCES fiets_verkoop_klant(klantnr)
     );
 
     CREATE TABLE accessoire_verkoop_filiaal (
@@ -101,7 +102,8 @@ def main():
         adres TEXT,
         woonplaats TEXT,
         geslacht TEXT,
-        geboortedatum TEXT
+        geboortedatum TEXT,
+        FOREIGN KEY (klantnr) REFERENCES accessoire_verkoop_klant(klantnr)
     );
 
     CREATE TABLE fiets_verkoop_filiaal (
@@ -124,7 +126,9 @@ def main():
         fabrikantnr INTEGER PRIMARY KEY,
         naam TEXT,
         adres TEXT,
-        plaats TEXT
+        plaats TEXT,
+        FOREIGN KEY (fabrikantnr) REFERENCES onderhoud_fabrikant(fabrikantnr),
+        FOREIGN KEY (fabrikantnr) REFERENCES fiets_inkoop_fabrikant(fabrikantnr)
     );
 
     CREATE TABLE fiets_verkoop_fiets (
@@ -135,7 +139,9 @@ def main():
         standaardprijs REAL,
         inkoopprijs REAL,
         fabrikant INTEGER,
-        FOREIGN KEY (fabrikant) REFERENCES fiets_verkoop_fabrikant(fabrikantnr)
+        FOREIGN KEY (fabrikant) REFERENCES fiets_verkoop_fabrikant(fabrikantnr),
+        FOREIGN KEY (fietsnr) REFERENCES onderhoud_fiets(fietsnr),
+        FOREIGN KEY (fietsnr) REFERENCES fiets_inkoop_fiets(fietsnr)
     );
 
     CREATE TABLE fiets_verkoop_verkoop (
@@ -157,7 +163,9 @@ def main():
         fabrikantnr INTEGER PRIMARY KEY,
         naam TEXT,
         adres TEXT,
-        plaats TEXT
+        plaats TEXT,
+        FOREIGN KEY (fabrikantnr) REFERENCES onderhoud_fabrikant(fabrikantnr),
+        FOREIGN KEY (fabrikantnr) REFERENCES fiets_verkoop_fabrikant(fabrikantnr)
     );
 
     CREATE TABLE fiets_inkoop_fiets (
@@ -169,7 +177,9 @@ def main():
         inkoopprijs REAL,
         kleur TEXT,
         fabrikant INTEGER,
-        FOREIGN KEY (fabrikant) REFERENCES fiets_inkoop_fabrikant(fabrikantnr)
+        FOREIGN KEY (fabrikant) REFERENCES fiets_inkoop_fabrikant(fabrikantnr),
+        FOREIGN KEY (fietsnr) REFERENCES onderhoud_fiets(fietsnr),
+        FOREIGN KEY (fietsnr) REFERENCES fiets_verkoop_fiets(fietsnr)
     );
 
     CREATE TABLE fiets_inkoop_inkoop (
@@ -204,7 +214,18 @@ def main():
         soort TEXT,
         merk TEXT,
         type TEXT,
-        kleur TEXT
+        kleur TEXT,
+        FOREIGN KEY (fietsnr) REFERENCES fiets_verkoop_fiets(fietsnr),
+        FOREIGN KEY (fietsnr) REFERENCES fiets_inkoop_fiets(fietsnr)
+    );
+                      
+    CREATE TABLE onderhoud_fabrikant (
+        fabrikantnr INTEGER PRIMARY KEY,
+        naam TEXT,
+        adres TEXT,
+        plaats TEXT,
+        FOREIGN KEY (fabrikantnr) REFERENCES fiets_verkoop_fabrikant(fabrikantnr),
+        FOREIGN KEY (fabrikantnr) REFERENCES fiets_inkoop_fabrikant(fabrikantnr)
     );
 
     CREATE TABLE onderhoud_onderhoud (
