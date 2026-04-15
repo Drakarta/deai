@@ -56,7 +56,9 @@ def main():
             standaardprijs REAL,
             inkoopprijs    REAL,
             omzet          REAL,
-            kleur          TEXT
+            kleur          TEXT,
+            partner        INTEGER,
+            FOREIGN KEY (partner) REFERENCES Dim_Partner(partnernr)
         );
 
         CREATE TABLE IF NOT EXISTS Dim_Partner (
