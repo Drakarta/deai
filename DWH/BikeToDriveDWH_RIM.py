@@ -5,114 +5,127 @@ def main():
     con = sqlite3.connect("BikeToDriveDWH.db")
     cur = con.cursor()
     cur.execute("PRAGMA foreign_keys = ON")
+
     cur.executescript(
         """--sql
-        CREATE TABLE IF NOT EXISTS Dim_Maand (
-            maand_id    INTEGER PRIMARY KEY,
-            maandnr     TINYINT,
-            maand       TEXT,
-            kwartaal    TEXT,
-            jaar        SMALLINT
-        );
+    -- DIM PARTNER
+    CREATE TABLE IF NOT EXISTS Dim_Partner (
+        partnernr    INTEGER PRIMARY KEY,
+        naam         TEXT,
+        adres        TEXT,
+        plaats       TEXT,
+        type_partner TEXT
+    );
 
-        CREATE TABLE IF NOT EXISTS Dim_Datum (
-            datum       DATE PRIMARY KEY,
-            dag         TINYINT,
-            maand_id    INTEGER,
-            FOREIGN KEY (maand_id) REFERENCES Dim_Maand(maand_id)
-        );
+    -- DIM PRODUCT
+    CREATE TABLE IF NOT EXISTS Dim_Product (
+        productnr      INTEGER PRIMARY KEY,
+        categorie      TEXT,
+        soort          TEXT,
+        merk           TEXT,
+        type_product   TEXT,
+        standaardprijs REAL,
+        inkoopprijs    REAL,
+        omzet          REAL,
+        kleur          TEXT,
+        partnernr        INTEGER,
+        FOREIGN KEY (partnernr) REFERENCES Dim_Partner(partnernr)
+    );
 
-        CREATE TABLE IF NOT EXISTS Dim_Klant (
-            klantnr       INTEGER PRIMARY KEY,
-            naam          TEXT,
-            adres         TEXT,
-            woonplaats    TEXT,
-            geslacht      TEXT,
-            geboortedatum DATE
-        );
+    -- DIM MAAND
+    CREATE TABLE IF NOT EXISTS Dim_Maand (
+        maand_id INTEGER PRIMARY KEY,
+        maandnr  INTEGER,
+        maand    TEXT,
+        kwartaal TEXT,
+        jaar     INTEGER
+    );
 
-        CREATE TABLE IF NOT EXISTS Dim_Filiaal (
-            filiaalnr INTEGER PRIMARY KEY,
-            naam      TEXT,
-            adres     TEXT,
-            provincie TEXT
-        );
+    -- DIM DATUM
+    CREATE TABLE IF NOT EXISTS Dim_Datum (
+        datum     TEXT PRIMARY KEY,
+        dag       INTEGER,
+        maand_id  INTEGER,
+        FOREIGN KEY (maand_id) REFERENCES Dim_Maand(maand_id)
+    );
 
-        CREATE TABLE IF NOT EXISTS Dim_Monteur (
-            monteurnr  INTEGER PRIMARY KEY,
-            naam       TEXT,
-            woonplaats TEXT,
-            uurloon    REAL,
-            filiaal    INTEGER,
-            FOREIGN KEY (filiaal) REFERENCES Dim_Filiaal(filiaalnr)
-        );
+    -- DIM KLANT
+    CREATE TABLE IF NOT EXISTS Dim_Klant (
+        klantnr       INTEGER PRIMARY KEY,
+        naam          TEXT,
+        adres         TEXT,
+        woonplaats    TEXT,
+        geslacht      TEXT,
+        geboortedatum TEXT
+    );
 
-        CREATE TABLE IF NOT EXISTS Dim_Product (
-            productnr      INTEGER PRIMARY KEY,
-            categorie      TEXT,
-            soort          TEXT,
-            merk           TEXT,
-            type_product   TEXT,
-            standaardprijs REAL,
-            inkoopprijs    REAL,
-            omzet          REAL,
-            kleur          TEXT,
-            partner        INTEGER,
-            FOREIGN KEY (partner) REFERENCES Dim_Partner(partnernr)
-        );
+    -- DIM FILIAAL
+    CREATE TABLE IF NOT EXISTS Dim_Filiaal (
+        filiaalnr INTEGER PRIMARY KEY,
+        naam      TEXT,
+        adres     TEXT,
+        provincie TEXT
+    );
 
-        CREATE TABLE IF NOT EXISTS Dim_Partner (
-            partnernr    INTEGER PRIMARY KEY,
-            naam         TEXT,
-            adres        TEXT,
-            plaats       TEXT,
-            type_partner TEXT
-        );
+    -- DIM MONTEUR
+    CREATE TABLE IF NOT EXISTS Dim_Monteur (
+        monteurnr  INTEGER PRIMARY KEY,
+        naam       TEXT,
+        woonplaats TEXT,
+        uurloon    REAL,
+        filiaal    INTEGER,
+        FOREIGN KEY (filiaal) REFERENCES Dim_Filiaal(filiaalnr)
+    );
 
-        CREATE TABLE IF NOT EXISTS Feit_Onderhoud (
-            onderhoudnr INTEGER PRIMARY KEY,
-            datum       DATE,
-            starttijd   TIME,
-            eindtijd    TIME,
-            duur        REAL,
-            fiets       INTEGER,
-            monteur     INTEGER,
-            FOREIGN KEY (datum)    REFERENCES Dim_Datum(datum),
-            FOREIGN KEY (fiets)    REFERENCES Dim_Product(productnr),
-            FOREIGN KEY (monteur)  REFERENCES Dim_Monteur(monteurnr)
-        );
+    -- FEIT VERKOOP
+    CREATE TABLE IF NOT EXISTS Feit_Verkoop (
+        verkoopnr      INTEGER PRIMARY KEY,
+        datum          TEXT,
+        aantal         INTEGER,
+        standaardprijs REAL,
+        verkoopprijs   REAL,
+        totaalprijs    REAL,
+        korting        REAL,
+        klantnr        INTEGER,
+        productnr      INTEGER,
+        monteurnr      INTEGER,
+        FOREIGN KEY (datum)     REFERENCES Dim_Datum(datum),
+        FOREIGN KEY (klantnr)   REFERENCES Dim_Klant(klantnr),
+        FOREIGN KEY (productnr) REFERENCES Dim_Product(productnr),
+        FOREIGN KEY (monteurnr) REFERENCES Dim_Monteur(monteurnr)
+    );
 
-        CREATE TABLE IF NOT EXISTS Feit_Verkoop (
-            verkoopnr      INTEGER PRIMARY KEY,
-            datum          DATE,
-            aantal         INTEGER,
-            standaardprijs REAL,
-            verkoopprijs   REAL,
-            korting        REAL,
-            klant          INTEGER,
-            accessoire     TEXT,
-            product        INTEGER,
-            monteur        INTEGER,
-            FOREIGN KEY (datum)    REFERENCES Dim_Datum(datum),
-            FOREIGN KEY (klant)    REFERENCES Dim_Klant(klantnr),
-            FOREIGN KEY (product)  REFERENCES Dim_Product(productnr),
-            FOREIGN KEY (monteur)  REFERENCES Dim_Monteur(monteurnr)
-        );
+    -- FEIT INKOOP
+    CREATE TABLE IF NOT EXISTS Feit_Inkoop (
+        inkoopnr      INTEGER PRIMARY KEY,
+        inkoopmaand   INTEGER,
+        inkoopjaar    INTEGER,
+        partnernr     INTEGER,
+        productnr     INTEGER,
+        aantal        INTEGER,
+        inkoopprijs   REAL,
+        totaalprijs   REAL,
+        FOREIGN KEY (inkoopmaand)  REFERENCES Dim_Maand(maand_id),
+        FOREIGN KEY (partnernr)  REFERENCES Dim_Partner(partnernr),
+        FOREIGN KEY (productnr)  REFERENCES Dim_Product(productnr)
+    );
 
-        CREATE TABLE IF NOT EXISTS Feit_Inkoop (
-            inkoopnr        INTEGER PRIMARY KEY,
-            inkoopmaandnr   INTEGER,
-            inkoopjaar      INTEGER,
-            partnernr       INTEGER,
-            productnr       INTEGER,
-            aantal          INTEGER,
-            inkoopprijs     REAL,
-            FOREIGN KEY (inkoopmaandnr) REFERENCES Dim_Maand(maandnr),
-            FOREIGN KEY (partnernr)  REFERENCES Dim_Partner(partnernr),
-            FOREIGN KEY (productnr)  REFERENCES Dim_Product(productnr)
-        );
-        """
+    -- FEIT ONDERHOUD
+    CREATE TABLE IF NOT EXISTS Feit_Onderhoud (
+        onderhoudnr INTEGER PRIMARY KEY,
+        datum       TEXT,
+        starttijd   TEXT,
+        eindtijd    TEXT,
+        duur        INTEGER,
+        productnr       INTEGER,
+        monteurnr     INTEGER,
+        FOREIGN KEY (datum)   REFERENCES Dim_Datum(datum),
+        FOREIGN KEY (productnr)   REFERENCES Dim_Product(productnr),
+        FOREIGN KEY (monteurnr) REFERENCES Dim_Monteur(monteurnr)
+    );
+    """
     )
+
     con.commit()
     con.close()
 
