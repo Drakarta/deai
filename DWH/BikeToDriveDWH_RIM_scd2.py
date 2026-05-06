@@ -14,7 +14,7 @@ def main():
     -- DIM PARTNER
     CREATE TABLE IF NOT EXISTS Dim_Partner (
         partner_sk   INTEGER PRIMARY KEY AUTOINCREMENT,
-        partnernr    INTEGER NOT NULL,        -- business key
+        partnernr    INTEGER NOT NULL,
         naam         TEXT,
         adres        TEXT,
         plaats       TEXT,
@@ -28,7 +28,7 @@ def main():
     -- DIM PRODUCT
     CREATE TABLE IF NOT EXISTS Dim_Product (
         product_sk     INTEGER PRIMARY KEY AUTOINCREMENT,
-        productnr      INTEGER NOT NULL,      -- business key
+        productnr      INTEGER NOT NULL,
         categorie      TEXT,
         soort          TEXT,
         merk           TEXT,
